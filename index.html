@@ -1,35 +1,24 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Plan Chess Academy - Interactive Puzzles</title>
+<title>Plan Chess Academy</title>
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        #board {
-            width: 320px;
-            margin: 20px auto;
-        }
-    </style>
+<style>
+body{
+font-family:Arial;
+text-align:center;
+}
+#board{
+width:320px;
+margin:20px auto;
+}
+</style>
 </head>
 
 <body>
@@ -37,13 +26,14 @@
 <h1>♟️ Plan Chess Academy Puzzles ♟️</h1>
 
 <h3>Checkmate in 1 Move</h3>
+
 <p>White to move and checkmate Black.</p>
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Chess_Board.svg/512px-Chess_Board.svg.png" width="320">
+<div id="board"></div>
+
 <script>
 var board = Chessboard('board', {
-    position: '6k1/5Q2/6K1/8/8/8/8/8',
-    draggable: true
+position: '6k1/5Q2/6K1/8/8/8/8/8'
 });
 </script>
 
