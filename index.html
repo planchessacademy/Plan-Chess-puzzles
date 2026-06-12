@@ -1,98 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Plan Chess Academy Puzzles</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
-
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            padding: 20px;
-        }
-
-        #board {
-            width: 400px;
-            margin: 20px auto;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px;
-        }
-
-        #message {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        #timer {
-            font-size: 22px;
-            color: red;
-        }
-    </style>
-</head>
-
-<body>
-
-<h1>♟️ Plan Chess Academy</h1>
-<h2>Mate in 1 Trainer</h2>
-
-<div id="timer">Time Left: 30</div>
-<div id="score">Score: 0</div>
-
-<div id="board"></div>
-
-<button onclick="checkAnswer()">Check Answer</button>
-<button onclick="nextPuzzle()">Next Puzzle</button>
-
-<div id="message"></div>
-
 <script>
 
-// ---------------- PUZZLES (SAFE 10) ----------------
-const puzzles = [
-   const puzzles = [
-    { fen: "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qg7#" },
-    { fen: "6k1/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qh7#" },
-    { fen: "7k/6Q1/6K1/8/8/8/8/8 w - - 0 1", solution: "Qh7#" },
-    { fen: "6k1/5R2/6K1/8/8/8/8/8 w - - 0 1", solution: "Rf8#" },
-    { fen: "7k/5R2/6K1/8/8/8/8/8 w - - 0 1", solution: "Rf8#" }
-];
-
-let current = 0;
+let game;
+let board;
 let score = 0;
 let time = 30;
 let timer;
-let game;
-let board;
+let currentPuzzle = null;
 
-// ---------------- LOAD PUZZLE ----------------
-function loadPuzzle() {
+// ---------------- LOAD RANDOM LICHESS PUZZLE ----------------
+async function loadPuzzle() {
 
-    game = new Chess(puzzles[current].fen);
+    try {
+        const res = await fetch("https://lichess.org/api/puzzle/daily");
+        const data = await res.json();
 
-    board = Chessboard('board', {
-        draggable: true,
-        position: game.fen(),
-        pieceTheme: "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
-        onDrop: onDrop
-    });
+        // fallback safety
+        if (!data.game || !data.puzzle) {
+            console.log("Invalid puzzle, retrying...");
+            loadPuzzle();
+            return;
+        }
 
-    document.getElementById("message").innerHTML = "";
-    startTimer();
+        currentPuzzle = data.puzzle;
+
+        game = new Chess(data.game.fen);
+
+        board = Chessboard('board', {
+            draggable: true,
+            position: game.fen(),
+            pieceTheme: "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
+            onDrop: onDrop
+        });
+
+        startTimer();
+        document.getElementById("message").innerHTML = "";
+
+    } catch (e) {
+        console.log("Error loading puzzle:", e);
+    }
 }
 
-// ---------------- MOVE PIECE ----------------
+// ---------------- MOVE ----------------
 function onDrop(source, target) {
 
     let move = game.move({
@@ -103,13 +51,13 @@ function onDrop(source, target) {
 
     if (move === null) return 'snapback';
 
-    setTimeout(() => {
-        board.position(game.fen());
-    }, 200);
+    board.position(game.fen());
 }
 
-// ---------------- CHECK ANSWER ----------------
+// ---------------- CHECK ----------------
 function checkAnswer() {
+
+    if (!currentPuzzle) return;
 
     if (game.in_checkmate()) {
 
@@ -117,25 +65,15 @@ function checkAnswer() {
         score++;
 
         document.getElementById("score").innerHTML = "Score: " + score;
-        document.getElementById("message").innerHTML = "✅ Checkmate Correct!";
+        document.getElementById("message").innerHTML = "✅ Correct Checkmate!";
     } else {
-        document.getElementById("message").innerHTML = "❌ Not Checkmate yet!";
+        document.getElementById("message").innerHTML = "❌ Not correct yet!";
     }
 }
 
-// ---------------- NEXT PUZZLE ----------------
+// ---------------- NEXT ----------------
 function nextPuzzle() {
-
     clearInterval(timer);
-    current++;
-
-    if (current >= puzzles.length) {
-        alert("Finished! Final Score: " + score);
-        current = 0;
-        score = 0;
-    }
-
-    board.destroy();
     loadPuzzle();
 }
 
@@ -154,7 +92,7 @@ function startTimer() {
 
         if (time <= 0) {
             clearInterval(timer);
-            document.getElementById("message").innerHTML = "⏰ Time up!";
+            document.getElementById("message").innerHTML = "⏰ Time Up!";
         }
 
     }, 1000);
@@ -164,6 +102,3 @@ function startTimer() {
 window.onload = loadPuzzle;
 
 </script>
-
-</body>
-</html>
