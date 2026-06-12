@@ -1,43 +1,215 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Plan Chess Academy</title>
+    <title>Plan Chess Academy Puzzles</title>
 
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
+
     <style>
         body {
-            text-align: center;
             font-family: Arial;
+            text-align: center;
+            padding: 20px;
         }
 
         #board {
-            width: 350px;
+            width: 400px;
             margin: 20px auto;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        #message {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #timer {
+            font-size: 24px;
+            color: red;
+            margin: 10px;
+        }
+
+        #score {
+            font-size: 20px;
+            margin: 10px;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>♟️ Plan Chess Academy ♟️</h1>
-    <h3>White to move and mate in 1</h3>
+<h1>♟️ Plan Chess Academy ♟️</h1>
 
-    <div id="board"></div>
+<h2>Mate in 1 Puzzle Trainer</h2>
 
-    <script>
-        window.onload = function () {
-            Chessboard('board', {
-                position: '7k/5Q2/6K1/8/8/8/8/8',
-                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
-            });
-        };
-    </script>
+<p>White to move and checkmate Black.</p>
+
+<div id="timer">Time Left: 30</div>
+
+<div id="score">Score: 0</div>
+
+<div id="board"></div>
+
+<button onclick="checkAnswer()">Check Answer</button>
+
+<button onclick="nextPuzzle()">Next Puzzle</button>
+
+<div id="message"></div>
+
+<script>
+
+const puzzles = [
+    {
+        fen: '7k/5Q2/6K1/8/8/8/8/8 w - - 0 1',
+        solution: 'Qg7#'
+    },
+
+    {
+        fen: '6k1/5ppp/8/8/8/8/5PPP/6KQ w - - 0 1',
+        solution: 'Qh8#'
+    },
+
+    {
+        fen: '7k/6Q1/6K1/8/8/8/8/8 w - - 0 1',
+        solution: 'Qh7#'
+    }
+];
+
+let currentPuzzle = 0;
+let score = 0;
+let timeLeft = 30;
+let timer;
+
+let game;
+let board;
+
+function loadPuzzle() {
+
+    game = new Chess(puzzles[currentPuzzle].fen);
+
+    board = Chessboard('board', {
+        draggable: true,
+        position: game.fen(),
+        pieceTheme:
+        'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
+
+        onDrop: onDrop
+    });
+
+    document.getElementById("message").innerHTML = "";
+
+    startTimer();
+}
+
+function onDrop(source, target) {
+
+    let move = game.move({
+        from: source,
+        to: target,
+        promotion: 'q'
+    });
+
+    if (move === null) {
+        return 'snapback';
+    }
+}
+
+function checkAnswer() {
+
+    if (game.in_checkmate()) {
+
+        clearInterval(timer);
+
+        score++;
+
+        document.getElementById("score").innerHTML =
+            "Score: " + score;
+
+        document.getElementById("message").innerHTML =
+            "✅ Correct! Checkmate!";
+
+    } else {
+
+        document.getElementById("message").innerHTML =
+            "❌ Wrong Answer. Try Again!";
+    }
+}
+
+function nextPuzzle() {
+
+    clearInterval(timer);
+
+    currentPuzzle++;
+
+    if (currentPuzzle >= puzzles.length) {
+
+        alert(
+            "Congratulations! You completed all puzzles!\n" +
+            "Final Score: " + score
+        );
+
+        currentPuzzle = 0;
+        score = 0;
+
+        document.getElementById("score").innerHTML =
+            "Score: 0";
+    }
+
+    board.destroy();
+
+    loadPuzzle();
+}
+
+function startTimer() {
+
+    clearInterval(timer);
+
+    timeLeft = 30;
+
+    document.getElementById("timer").innerHTML =
+        "Time Left: " + timeLeft;
+
+    timer = setInterval(function() {
+
+        timeLeft--;
+
+        document.getElementById("timer").innerHTML =
+            "Time Left: " + timeLeft;
+
+        if (timeLeft <= 0) {
+
+            clearInterval(timer);
+
+            document.getElementById("message").innerHTML =
+                "⏰ Time's Up! Click Next Puzzle.";
+
+        }
+
+    }, 1000);
+}
+
+window.onload = function() {
+
+    loadPuzzle();
+
+};
+
+</script>
 
 </body>
 </html>
+```
