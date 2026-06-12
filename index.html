@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Plan Chess Academy</title>
+    <title>Plan Chess Academy Puzzles</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-}
-#board {
-    width: 320px;
-    margin: 20px auto;
-}
-</style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #board {
+            width: 350px;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>Plan Chess Academy Puzzles</h1>
-<h3>Checkmate in 1 Move</h3>
+<h1>♟️ Plan Chess Academy ♟️</h1>
+<h3>Mate in 1 Puzzle</h3>
 <p>White to move and checkmate Black.</p>
 
 <div id="board"></div>
@@ -32,8 +34,8 @@ body {
 <script>
 window.onload = function() {
     Chessboard('board', {
-        position: position: '7k//8/8/8/8/8/8/k7'
-pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        position: '7k/6Q1/6K1/8/8/8/8/8',
+        pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
     });
 };
 </script>
