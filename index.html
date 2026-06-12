@@ -1,16 +1,15 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
     <title>Plan Chess Academy Puzzles</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 
     <style>
@@ -32,130 +31,72 @@
         }
 
         #message {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
-            margin-top: 15px;
         }
 
         #timer {
-            font-size: 24px;
+            font-size: 22px;
             color: red;
-            margin: 10px;
-        }
-
-        #score {
-            font-size: 20px;
-            margin: 10px;
         }
     </style>
 </head>
 
 <body>
 
-<h1>♟️ Plan Chess Academy ♟️</h1>
-
-<h2>Mate in 1 Puzzle Trainer</h2>
-
-<p>White to move and checkmate Black.</p>
+<h1>♟️ Plan Chess Academy</h1>
+<h2>Mate in 1 Trainer</h2>
 
 <div id="timer">Time Left: 30</div>
-
 <div id="score">Score: 0</div>
 
 <div id="board"></div>
 
 <button onclick="checkAnswer()">Check Answer</button>
-
 <button onclick="nextPuzzle()">Next Puzzle</button>
 
 <div id="message"></div>
 
 <script>
 
-const puzzles = [ const puzzles = [
-    {
-        fen: '7k/5Q2/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Qg7#'
-    },
-    {
-        fen: '6k1/5Qpp/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Qh7#'
-    },
-    {
-        fen: '7k/6Q1/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Qh7#'
-    },
-    {
-        fen: '6k1/5ppp/6Q1/6K1/8/8/8/8 w - - 0 1',
-        solution: 'Qh7#'
-    },
-    {
-        fen: '7k/7Q/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Qg7#'
-    },
-    {
-        fen: '6k1/5Q2/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Qe8#'
-    },
-    {
-        fen: '7k/6R1/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Rg8#'
-    },
-    {
-        fen: '6k1/5R2/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Rf8#'
-    },
-    {
-        fen: '7k/5R2/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Rf8#'
-    },
-    {
-        fen: '6k1/6R1/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Rg8#'
-    }
-];
-    {
-        fen: '7k/5Q2/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Qg7#'
-    },
-
-    {
-        fen: '6k1/5ppp/8/8/8/8/5PPP/6KQ w - - 0 1',
-        solution: 'Qh8#'
-    },
-
-    {
-        fen: '7k/6Q1/6K1/8/8/8/8/8 w - - 0 1',
-        solution: 'Qh7#'
-    }
+// ---------------- PUZZLES (SAFE 10) ----------------
+const puzzles = [
+    { fen: "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qg7#" },
+    { fen: "6k1/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qh7#" },
+    { fen: "7k/6Q1/6K1/8/8/8/8/8 w - - 0 1", solution: "Qh7#" },
+    { fen: "6k1/5R2/6K1/8/8/8/8/8 w - - 0 1", solution: "Rf8#" },
+    { fen: "7k/5R2/6K1/8/8/8/8/8 w - - 0 1", solution: "Rf8#" },
+    { fen: "6k1/6R1/6K1/8/8/8/8/8 w - - 0 1", solution: "Rg8#" },
+    { fen: "7k/7Q/6K1/8/8/8/8/8 w - - 0 1", solution: "Qg7#" },
+    { fen: "6k1/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qe8#" },
+    { fen: "7k/6Q1/6K1/8/8/8/8/8 w - - 0 1", solution: "Qh7#" },
+    { fen: "6k1/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qg7#" }
 ];
 
-let currentPuzzle = 0;
+let current = 0;
 let score = 0;
-let timeLeft = 30;
+let time = 30;
 let timer;
-
 let game;
 let board;
 
+// ---------------- LOAD PUZZLE ----------------
 function loadPuzzle() {
 
-    game = new Chess(puzzles[currentPuzzle].fen);
+    game = new Chess(puzzles[current].fen);
 
     board = Chessboard('board', {
         draggable: true,
         position: game.fen(),
-        pieceTheme:
-        'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
-
+        pieceTheme: "https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/img/chesspieces/wikipedia/{piece}.png",
         onDrop: onDrop
     });
 
     document.getElementById("message").innerHTML = "";
-
     startTimer();
 }
 
+// ---------------- MOVE PIECE ----------------
 function onDrop(source, target) {
 
     let move = game.move({
@@ -164,93 +105,69 @@ function onDrop(source, target) {
         promotion: 'q'
     });
 
-    if (move === null) {
-        return 'snapback';
-    }
+    if (move === null) return 'snapback';
+
+    setTimeout(() => {
+        board.position(game.fen());
+    }, 200);
 }
 
+// ---------------- CHECK ANSWER ----------------
 function checkAnswer() {
 
     if (game.in_checkmate()) {
 
         clearInterval(timer);
-
         score++;
 
-        document.getElementById("score").innerHTML =
-            "Score: " + score;
-
-        document.getElementById("message").innerHTML =
-            "✅ Correct! Checkmate!";
-
+        document.getElementById("score").innerHTML = "Score: " + score;
+        document.getElementById("message").innerHTML = "✅ Checkmate Correct!";
     } else {
-
-        document.getElementById("message").innerHTML =
-            "❌ Wrong Answer. Try Again!";
+        document.getElementById("message").innerHTML = "❌ Not Checkmate yet!";
     }
 }
 
+// ---------------- NEXT PUZZLE ----------------
 function nextPuzzle() {
 
     clearInterval(timer);
+    current++;
 
-    currentPuzzle++;
-
-    if (currentPuzzle >= puzzles.length) {
-
-        alert(
-            "Congratulations! You completed all puzzles!\n" +
-            "Final Score: " + score
-        );
-
-        currentPuzzle = 0;
+    if (current >= puzzles.length) {
+        alert("Finished! Final Score: " + score);
+        current = 0;
         score = 0;
-
-        document.getElementById("score").innerHTML =
-            "Score: 0";
     }
 
     board.destroy();
-
     loadPuzzle();
 }
 
+// ---------------- TIMER ----------------
 function startTimer() {
 
     clearInterval(timer);
+    time = 30;
 
-    timeLeft = 30;
+    document.getElementById("timer").innerHTML = "Time Left: 30";
 
-    document.getElementById("timer").innerHTML =
-        "Time Left: " + timeLeft;
+    timer = setInterval(() => {
 
-    timer = setInterval(function() {
+        time--;
+        document.getElementById("timer").innerHTML = "Time Left: " + time;
 
-        timeLeft--;
-
-        document.getElementById("timer").innerHTML =
-            "Time Left: " + timeLeft;
-
-        if (timeLeft <= 0) {
-
+        if (time <= 0) {
             clearInterval(timer);
-
-            document.getElementById("message").innerHTML =
-                "⏰ Time's Up! Click Next Puzzle.";
-
+            document.getElementById("message").innerHTML = "⏰ Time up!";
         }
 
     }, 1000);
 }
 
-window.onload = function() {
-
-    loadPuzzle();
-
-};
+// ---------------- START ----------------
+window.onload = loadPuzzle;
 
 </script>
 
 </body>
 </html>
-```
