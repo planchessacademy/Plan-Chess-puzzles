@@ -1,50 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Plan Chess Academy</title>
+<title>Plan Chess Academy</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            padding: 20px;
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
-        #board {
-            width: 400px;
-            margin: auto;
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-        }
+<style>
+body{
+font-family:Arial;
+text-align:center;
+padding:20px;
+}
 
-        #timer {
-            font-size: 22px;
-            color: red;
-        }
+#board{
+width:400px;
+margin:auto;
+}
 
-        #score {
-            font-size: 20px;
-        }
+button{
+padding:10px 20px;
+margin:10px;
+font-size:16px;
+}
 
-        #message {
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-    </style>
+#timer{
+font-size:22px;
+color:red;
+}
+
+#score{
+font-size:20px;
+}
+
+#message{
+font-size:20px;
+font-weight:bold;
+margin-top:10px;
+}
+</style>
+
 </head>
 
 <body>
@@ -63,14 +66,16 @@
 <div id="message"></div>
 
 <script>
-
-// ---------------- SAFE PUZZLES ----------------
-const puzzles = [
-    { fen: "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qg7#" },
-    { fen: "6k1/5Q2/6K1/8/8/8/8/8 w - - 0 1", solution: "Qh7#" },
-    { fen: "7k/6Q1/6K1/8/8/8/8/8 w - - 0 1", solution: "Qh7#" },
-    { fen: "6k1/5R2/6K1/8/8/8/8/8 w - - 0 1", solution: "Rf8#" },
-    { fen: "7k/7Q/6K1/8/8/8/8/8 w - - 0 1", solution: "Qg7#" }
+    const puzzles = [
+{
+fen:"7k/5K2/6Q1/8/8/8/8/8 w - - 0 1"
+},
+{
+fen:"6k1/5R2/6K1/8/8/8/8/8 w - - 0 1"
+},
+{
+fen:"7k/7Q/6K1/8/8/8/8/8 w - - 0 1"
+}
 ];
 
 let current = 0;
@@ -80,89 +85,108 @@ let timer;
 let game;
 let board;
 
-// ---------------- LOAD PUZZLE ----------------
 function loadPuzzle() {
 
-    game = new Chess(puzzles[current].fen);
+game = new Chess(puzzles[current].fen);
 
-    board = Chessboard('board', {
-        draggable: true,
-        position: game.fen(),
-        pieceTheme: "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
-        onDrop: onDrop
-    });
-
-    document.getElementById("message").innerHTML = "";
-    startTimer();
+if(board){
+board.destroy();
 }
 
-// ---------------- MOVE PIECE ----------------
-function onDrop(source, target) {
+board = Chessboard('board',{
+draggable:true,
+position:game.fen(),
+pieceTheme:"https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
+onDrop:onDrop
+});
 
-    let move = game.move({
-        from: source,
-        to: target,
-        promotion: 'q'
-    });
-
-    if (move === null) return 'snapback';
-
-    board.position(game.fen());
+document.getElementById("message").innerHTML="";
+startTimer();
 }
 
-// ---------------- CHECK ANSWER ----------------
-function checkAnswer() {
+function onDrop(source,target){
 
-    if (game.in_checkmate()) {
+let move = game.move({
+from:source,
+to:target,
+promotion:'q'
+});
 
-        clearInterval(timer);
-        score++;
-
-        document.getElementById("score").innerHTML = "Score: " + score;
-        document.getElementById("message").innerHTML = "✅ Correct Checkmate!";
-    } else {
-        document.getElementById("message").innerHTML = "❌ Not Checkmate!";
-    }
+if(move===null){
+return 'snapback';
 }
 
-// ---------------- NEXT PUZZLE ----------------
-function nextPuzzle() {
+board.position(game.fen());
+}
+    function checkAnswer(){
 
-    clearInterval(timer);
-    current++;
+if(game.in_checkmate()){
 
-    if (current >= puzzles.length) {
-        alert("All puzzles completed! Score: " + score);
-        current = 0;
-        score = 0;
-    }
+clearInterval(timer);
 
-    board.destroy();
-    loadPuzzle();
+score++;
+
+document.getElementById("score").innerHTML =
+"Score: " + score;
+
+document.getElementById("message").innerHTML =
+"✅ Correct Checkmate!";
+
+}else{
+
+document.getElementById("message").innerHTML =
+"❌ Not Checkmate!";
 }
 
-// ---------------- TIMER ----------------
-function startTimer() {
-
-    clearInterval(timer);
-    time = 30;
-
-    document.getElementById("timer").innerHTML = "Time Left: 30";
-
-    timer = setInterval(() => {
-
-        time--;
-        document.getElementById("timer").innerHTML = "Time Left: " + time;
-
-        if (time <= 0) {
-            clearInterval(timer);
-            document.getElementById("message").innerHTML = "⏰ Time Up!";
-        }
-
-    }, 1000);
 }
 
-// ---------------- START ----------------
+function nextPuzzle(){
+
+clearInterval(timer);
+
+current++;
+
+if(current >= puzzles.length){
+
+alert("All puzzles completed!");
+
+current = 0;
+score = 0;
+
+document.getElementById("score").innerHTML =
+"Score: 0";
+}
+
+loadPuzzle();
+}
+
+function startTimer(){
+
+clearInterval(timer);
+
+time = 30;
+
+document.getElementById("timer").innerHTML =
+"Time Left: 30";
+
+timer = setInterval(function(){
+
+time--;
+
+document.getElementById("timer").innerHTML =
+"Time Left: " + time;
+
+if(time <= 0){
+
+clearInterval(timer);
+
+document.getElementById("message").innerHTML =
+"⏰ Time Up!";
+}
+
+},1000);
+}
+
 window.onload = loadPuzzle;
 
 </script>
