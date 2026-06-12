@@ -1,11 +1,43 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-<title>Plan Chess Academy Puzzles</title>
+    <title>Plan Chess Academy - Interactive Puzzles</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        #board {
+            width: 320px;
+            margin: 20px auto;
+        }
+    </style>
 </head>
+
 <body>
-<h1>Plan Chess Academy</h1>
-<h2>Chess Puzzles Coming Soon!</h2>
-<p>Welcome to our puzzle section.</p>
+
+<h1>♟️ Plan Chess Academy Puzzles ♟️</h1>
+
+<h3>Checkmate in 1 Move</h3>
+<p>White to move and checkmate Black.</p>
+
+<div id="board"></div>
+
+<script>
+var board = Chessboard('board', {
+    position: '6k1/5Q2/6K1/8/8/8/8/8 w - - 0 1',
+    draggable: true
+});
+</script>
+
 </body>
 </html>
