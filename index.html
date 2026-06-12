@@ -3,27 +3,32 @@
 let game;
 let board;
 let score = 0;
-let time = 30;
 let timer;
+let time = 30;
 let currentPuzzle = null;
 
-// ---------------- LOAD RANDOM LICHESS PUZZLE ----------------
+// ---------------- LOAD RANDOM PUZZLE (MANY PUZZLES) ----------------
 async function loadPuzzle() {
 
     try {
-        const res = await fetch("https://lichess.org/api/puzzle/daily");
+        // random puzzle from Lichess API (lots of puzzles)
+        const res = await fetch("https://lichess.org/api/puzzle/themes/mateIn1");
         const data = await res.json();
 
-        // fallback safety
-        if (!data.game || !data.puzzle) {
-            console.log("Invalid puzzle, retrying...");
+        // pick random puzzle
+        const puzzles = data.puzzles || [];
+        if (puzzles.length === 0) {
+            console.log("No puzzles found, retrying...");
             loadPuzzle();
             return;
         }
 
-        currentPuzzle = data.puzzle;
+        const random = puzzles[Math.floor(Math.random() * puzzles.length)];
+        currentPuzzle = random;
 
-        game = new Chess(data.game.fen);
+        game = new Chess(random.fen);
+
+        if (board) board.destroy();
 
         board = Chessboard('board', {
             draggable: true,
@@ -36,7 +41,7 @@ async function loadPuzzle() {
         document.getElementById("message").innerHTML = "";
 
     } catch (e) {
-        console.log("Error loading puzzle:", e);
+        console.log("Error loading puzzles:", e);
     }
 }
 
@@ -54,10 +59,8 @@ function onDrop(source, target) {
     board.position(game.fen());
 }
 
-// ---------------- CHECK ----------------
+// ---------------- CHECK ANSWER ----------------
 function checkAnswer() {
-
-    if (!currentPuzzle) return;
 
     if (game.in_checkmate()) {
 
@@ -71,7 +74,7 @@ function checkAnswer() {
     }
 }
 
-// ---------------- NEXT ----------------
+// ---------------- NEXT PUZZLE ----------------
 function nextPuzzle() {
     clearInterval(timer);
     loadPuzzle();
